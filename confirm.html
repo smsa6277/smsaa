@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>رمز التحقق | OTP</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f1f3f6;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .otp-box {
+      background-color: #ffffff;
+      padding: 40px 30px;
+      width: 90%;
+      max-width: 420px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 20px;
+      color: #0d2343;
+      margin-bottom: 10px;
+    }
+
+    .info-text {
+      font-size: 14px;
+      color: #444;
+      margin-bottom: 25px;
+    }
+
+    .otp-inputs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+
+    .otp-inputs input {
+      width: 40px;
+      height: 50px;
+      font-size: 24px;
+      text-align: center;
+      border: 1.5px solid #ccc;
+      border-radius: 10px;
+      background-color: #f9f9f9;
+      transition: all 0.3s;
+    }
+
+    .otp-inputs input:focus {
+      border-color: #0d2343;
+      background-color: #fff;
+      outline: none;
+      box-shadow: 0 0 5px rgba(13,35,67,0.2);
+    }
+
+    .timer {
+      color: #888;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+
+    .confirm-btn {
+      width: 100%;
+      background-color: #0d2343;
+      color: #ffffff;
+      border: none;
+      padding: 14px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .confirm-btn:hover {
+      background-color: #081a33;
+    }
+
+    .resend {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #0d2343;
+      background: none;
+      border: none;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="otp-box">
+  <h2>رمز التحقق لمرة واحدة</h2>
+  <p class="info-text">تم إرسال رمز تحقق إلى رقم هاتفك المنتهي بـ <strong>7890</strong>. يرجى إدخال الرمز أدناه لإكمال العملية.</p>
+
+  <div class="otp-inputs">
+    <input type="text" maxlength="1" />
+    <input type="text" maxlength="1" />
+    <input type="text" maxlength="1" />
+    <input type="text" maxlength="1" />
+    <input type="text" maxlength="1" />
+    <input type="text" maxlength="1" />
+  </div>
+
+  <div class="timer" id="timer">الرمز ينتهي خلال: 01:00</div>
+
+  <button class="confirm-btn">تأكيد</button>
+  <button class="resend">لم تستلم الرمز؟ أعد الإرسال</button>
+</div>
+
+</body>
+</html>
